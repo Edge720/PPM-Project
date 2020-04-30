@@ -29,16 +29,17 @@ def index(request,monthAdd = 0):
         temp_d_iter = 0
         for day in week:
             try:
-                c_event = Event.objects.get(event_date__year=timezone.now().year, event_date__month=timezone.now().month, event_date__day=day)
+                c_event = Event.objects.get(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
             except:
                 c_event = 0
             if c_event != 0:
-                c_list[temp_w_iter][temp_d_iter] = [day, c_event]
+                c_list[temp_w_iter][temp_d_iter] = [day,c_event]
+            else: c_list[temp_w_iter][temp_d_iter] = [day]
             temp_d_iter += 1
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
     today = timezone.now().day
-
+     
     context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today}
     return render(request, 'events/index.html', context)
 
