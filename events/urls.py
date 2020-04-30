@@ -6,5 +6,8 @@ app_name = 'events'
 urlpatterns = [
     path('', views.index, name='index'),
     path('add/', views.add, name='add'),
-    path('add/done/', views.add_done, name='add_done')
+    path('add/done/', views.add_done, name='add_done'),
+    path('day/', views.day, name='Day'),
+    path('<monthAdd>/', views.index, name='newMonth')
+    
 ]

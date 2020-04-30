@@ -10,6 +10,14 @@
         td:hover{
             background-color: lavender;
         }
+	
+	th {
+	    background-color: #f2f2f2;
+	    width: 90px;
+	}	
+
+	
+	tr:nth-child(even) {background-color: #f2f2f2;}
 
     .sidenav {
       height: 100%;
@@ -67,12 +75,16 @@ function openNav() {
   document.getElementById("mySidenav").style.width = "250px";
 }
 
+function colorChanger(el){
+    alert("Row index is:");
+}
+
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
 </script>
 
-<div class="container">
+<div class="container" >
     <h2>{{ month }}/{{ year }}</h2>
 
 
@@ -89,14 +101,23 @@ function closeNav() {
         </tr>
         </thead>
         <tbody>
+
+	
             {% for week in c_list %}
                 <tr>
                 {% for day in week %}
                     {% if day != 0 %}
                         {% if today == day %}
-                            <td style="background-color: lightblue">{{ day }}</td>
-                        {% else %}
-                            <td>{{ day }}</td>
+                            <td> <a href="day" target="popup" onclick="window.open('day','name','width=600,height=400')" style="background-color: lightblue">{{ day }}</td>
+                        {% else %}		   
+                            <td style="height: 150px";>
+			    <table>
+    			    <tr><td><a href="day" target="popup" onclick="window.open('day','name','width=600,height=400')">{{ day }}</td></tr>
+   			    <tr><td style="background-color: #0492C2">nData</td></tr>
+			    <tr><td>nData</td></tr>
+    			    </table>
+
+			    </td>
                         {% endif %}
                     {% else %}
                         <td style="background: #d3d3d3"></td>
@@ -107,5 +128,17 @@ function closeNav() {
         </tbody>
     </table>
 </div>
+<form action="/events/1/" method="post">
+    {% csrf_token %}
+    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Next" />
+    </form>
+<form action="/events/-1/" method="post">
+    {% csrf_token %}
+    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Previous" />
+    </form>
+<form action="/events/0/" method="post">
+    {% csrf_token %}
+    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Reset" />
+    </form>
 </body>
 </html>
