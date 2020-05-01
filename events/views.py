@@ -13,9 +13,10 @@ yearCount = 0
 # Create your views here.
 def index(request,monthAdd = 0):
     global monthCount,yearCount
-    monthCount = monthCount + int(monthAdd)
+    int_month = int(monthAdd)
+    monthCount = monthCount + int_month
     c = calendar.Calendar(calendar.MONDAY)
-    if int(monthAdd) == 0:
+    if int_month == 0:
         monthCount = 0
         yearCount = 0
     if timezone.now().month+monthCount == 13 :
@@ -76,3 +77,11 @@ def remove_done(request):
         print('Error in retrieving event!')
 
     return HttpResponseRedirect(reverse('events:index'))
+
+
+def login(request,email ="",password = ""):
+    return render(request,'events/login.html')
+
+
+
+    

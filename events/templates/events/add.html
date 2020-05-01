@@ -6,17 +6,27 @@
     <style>
 	
 	h1 {
- 	    padding: 1rem;
+	    color : #E8E8E8;
+	    border: 2px solid #3498DB;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;
+	    
+	    background: #3498DB;
+	    font-weight:normal;
 	}
 
 	body {
+	     background: #E8E8E8;
 	     font-family:sans-serif;
 	}
 	form {
+	     background: white;
 	     margin:3rem auto;
 	     max-width:500px;
 	     border: 2px solid #3498DB;
 	     padding: 2rem;
+	     border-radius: 5px;
 		
     }
 	input {
@@ -40,9 +50,10 @@
     </style>
 </head>
 <body>
-<h1 style="text-align:center">Add Event To Calender</h1>
+
 
 <form action="{% url 'events:add_done'%}" method="post">
+    <h1 style="text-align:center">Add Event To Calendar</h1>
     {% csrf_token %}
     <label for="name">Event name: </label>
     <input type="text" name="name" id="name" required><br>

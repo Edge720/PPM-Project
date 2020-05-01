@@ -14,7 +14,9 @@
 	th {
 	    background-color: #f2f2f2;
 	    width: 120px;
+	    
 	}	
+	
 
 	
 	tr:nth-child(even) {background-color: #f2f2f2;}
@@ -113,9 +115,9 @@ function closeNav() {
                         {% else %}		   
                             <td style="height: 150px";>
 			    <table id="inner_table">  
-                      	    <tr><td><a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td></tr>
+                      	    <tr id = "event_item"><td style="cursor:pointer;"><a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td></tr>
 			    {% for event in day.1 %} 
-			    	<tr><td style="background-color: #0492C2;">{{ event }}</td></tr>
+			    	<tr><td style="background-color: #ADD8E6; border-radius: 5px; padding-right: 10px; padding-left: 5px; cursor:pointer; colour: white;"><a  style = "color: white;" target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ event }}</td></tr>
 			    {% endfor %}
     			    </table>
 			    </td>
