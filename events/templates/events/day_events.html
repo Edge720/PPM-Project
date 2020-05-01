@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Events for {{ year }}/{{ month }}/{{ day }}</title>
+</head>
+<body>
+{% if event != 0 %}
+    <h2>{{event.event_name}} - {{ event.event_date }}</h2>
+    <hr>
+    description?
+{% else %}
+    No events on this day!
+{% endif %}
+</body>
+</html>

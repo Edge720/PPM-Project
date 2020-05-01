@@ -64,7 +64,7 @@
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="add">Add</a>
-    <a href="#">Remove</a>
+    <a href="remove">Remove</a>
     <a href="#">Settings</a>
     <a href="#">Log out</a>
 </div>
@@ -104,12 +104,17 @@ function closeNav() {
                 {% for day in week %}
                     {% if day.0 != 0 %}
                         {% if today == day %}
-                            <td> <a href="day" target="popup" onclick="window.open('day','name','width=600,height=400')" style="background-color: lightblue">{{ day }}</td>
+                            <td> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')" style="background-color: lightblue">{{ day.0 }}</a></td>
                         {% else %}		   
                             <td style="height: 150px";>
 			    <table>
+<<<<<<< HEAD
     			    <tr><td><a href="day" target="popup" onclick="window.open('day','name','width=600,height=400')">{{ day.0 }}</td></tr>
 			    <tr><td style="background-color: #0492C2"><a href="day" target="popup" onclick="window.open('day','name','width=600,height=400')">{{ day.1 }}</td></tr>
+=======
+                    <tr><td><a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td></tr>
+			    <tr><td style="background-color: #0492C2">{{ day.1 }}</td></tr>
+>>>>>>> 7655f8f1d677592c5463464d3c8a5a07af22a67c
     			    </table>
 
 			    </td>
