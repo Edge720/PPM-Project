@@ -3,9 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Add event</title>
+    <style>
+	
+	h1 {
+ 	    padding: 1rem;
+	}
+
+	body {
+	     font-family:sans-serif;
+	}
+	form {
+	     margin:3rem auto;
+	     max-width:500px;
+	     border: 2px solid #3498DB;
+	     padding: 2rem;
+		
+    }
+	input {
+	     display:block;
+	     width: 100%	
+	}
+	
+	#btn {
+	     border:0;
+	     height: 2rem;
+	     background:#3498DB;
+	     text-transform:uppercase;
+	     cursor:pointer;
+	     width:auto;
+	      &:hover{
+		background:#3498D8;
+		}   
+	}
+
+
+    </style>
 </head>
 <body>
-<h1>Add event</h1>
+<h1 style="text-align:center">Add Event To Calender</h1>
 
 <form action="{% url 'events:add_done'%}" method="post">
     {% csrf_token %}
@@ -16,8 +51,10 @@
     <label for="start_time">Event Start Time: </label>
     <input type="time" name ="start_time" id="start_time" required><br>
     <label for="end_time">Event End Time: </label>
-    <input type="time" name ="end_time" id="end_time" required><br>  
-<input type="submit" value="Add event">
+    <input type="time" name ="end_time" id="end_time" required><br>
+    <label for="desc">Event Description: </label>
+    <textarea id="desc" rows="10" cols="80"></textarea>
+<input type="submit" value="Add event" id = "btn">
 </form>
 </body>
 </html>

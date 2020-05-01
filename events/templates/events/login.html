@@ -18,7 +18,7 @@
 <body>
 <div style="padding-left: 30%; padding-right: 30%; padding-top: 15%;">
     <div class="panel panel-default">
-        <form class="panel-body" action="{% url 'login' email password %}" method="post">
+        <form class="panel-body" action="{% url 'events:login' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="email">Email:</label>

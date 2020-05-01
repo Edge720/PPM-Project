@@ -32,6 +32,11 @@
       padding-top: 60px;
     }
 
+   #inner_table {
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
     .sidenav a {
       padding: 8px 8px 8px 32px;
       text-decoration: none;
@@ -66,7 +71,7 @@
     <a href="add">Add</a>
     <a href="remove">Remove</a>
     <a href="#">Settings</a>
-    <a href="#">Log out</a>
+    <a href="login">Log out</a>
 </div>
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
 
@@ -107,10 +112,10 @@ function closeNav() {
                             <td> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')" style="background-color: lightblue">{{ day.0 }}</a></td>
                         {% else %}		   
                             <td style="height: 150px";>
-			    <table>  
+			    <table id="inner_table">  
                       	    <tr><td><a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td></tr>
 			    {% for event in day.1 %} 
-			    	<tr><td style="background-color: #0492C2">{{ event }}</td></tr>
+			    	<tr><td style="background-color: #0492C2;">{{ event }}</td></tr>
 			    {% endfor %}
     			    </table>
 			    </td>
