@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 import calendar
 
@@ -11,7 +12,7 @@ yearCount = 0
 
 # Create your views here.
 def index(request,monthAdd = 0):
-    global monthCount,yearCount
+    global monthCount, yearCount
     monthCount = monthCount + int(monthAdd)
     c = calendar.Calendar(calendar.MONDAY)
     if int(monthAdd) == 0:
@@ -43,12 +44,27 @@ def index(request,monthAdd = 0):
     context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today}
     return render(request, 'events/index.html', context)
 
+def remove(request):
+    events = Event.objects.all()
+
+    context = {'events':events}
+    return render(request, 'events/remove.html', context)
+
+def remove_done(request):
+    try:
+        event = Event.objects.get(pk=request.POST['choice'])
+        event.delete()
+    except:
+        print('Error in retrieving event!')
+
+    return HttpResponseRedirect(reverse('events:index'))
+
 def add(request):
     return render(request, 'events/add.html')
 
 def add_done(request):
     try:
-        event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
+        event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_description=request.POST['description'])
         event.save()
     except:
         print("Didn't get data!")
@@ -56,5 +72,10 @@ def add_done(request):
 
     return HttpResponseRedirect(reverse('events:index'))
 
-def day(request):
-    return render(request, 'events/Day.html')
+def day_events(request, year, month, day):
+    try:
+        event = Event.objects.get(event_date__year=timezone.now().year + yearCount,event_date__month=timezone.now().month + monthCount, event_date__day=day)
+    except:
+        event = 0
+    context={'year':year, 'month':month, 'day':day, 'event':event}
+    return render(request, 'events/day_events.html', context)
