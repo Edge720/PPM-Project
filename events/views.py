@@ -64,7 +64,7 @@ def add(request):
 
 def add_done(request):
     try:
-        event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_description=request.POST['description'])
+        event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
         event.save()
     except:
         print("Didn't get data!")
