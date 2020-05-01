@@ -29,12 +29,13 @@ def index(request,monthAdd = 0):
     for week in c_list:
         temp_d_iter = 0
         for day in week:
-            try:
-                c_event = Event.objects.get(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
-            except:
-                c_event = 0
-            if c_event != 0:
-                c_list[temp_w_iter][temp_d_iter] = [day,c_event]
+            event_list = []
+            event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
+            for event in event_set:
+                event_list.append(event)
+                print(event)
+            if len(event_list) != 0:
+                c_list[temp_w_iter][temp_d_iter] = [day,event_list]
             else: c_list[temp_w_iter][temp_d_iter] = [day]
             temp_d_iter += 1
         temp_w_iter += 1
@@ -48,24 +49,30 @@ def add(request):
     return render(request, 'events/add.html',{'form': form})
 
 def add_done(request):
-<<<<<<< HEAD
-    print(request.POST['name'])
-    new_name = request.POST['name']
-    datetime_object = request.POST['date']
-    
-    print(datetime_object)
-    event = Event(event_name=new_name,event_date="08-05-2020")
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
     event.save()
-=======
-    try:
-        event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
-        event.save()
-    except:
-        print("Didn't get data!")
-
-
->>>>>>> 2c0f385c324c27dcd4489a2662d83d79d977ed59
     return HttpResponseRedirect(reverse('events:index'))
 
-def day_events(request):
-    return render(request, 'events/Day.html')
+def day_events(request, year, month, day):
+    try:
+        event = Event.objects.get(event_dateyear=timezone.now().year + yearCount,event_datemonth=timezone.now().month + monthCount, event_date__day=day) #,start_time=request.POST['start_time'],end_time=request.POST['end_time']
+    except:
+        event = 0
+    context={'year':year, 'month':month, 'day':day, 'event':event}
+    return render(request, 'events/day_events.html', context)
+
+
+def remove(request):
+    events = Event.objects.all()
+
+    context = {'events':events}
+    return render(request, 'events/remove.html', context)
+
+def remove_done(request):
+    try:
+        event = Event.objects.get(pk=request.POST['choice'])
+        event.delete()
+    except:
+        print('Error in retrieving event!')
+
+    return HttpResponseRedirect(reverse('events:index'))

@@ -5,16 +5,18 @@
     <title>Add event</title>
 </head>
 <body>
-<<<<<<< HEAD
 <h1>Add event</h1>
-=======
-<h1>Add an event</h1>
->>>>>>> 7655f8f1d677592c5463464d3c8a5a07af22a67c
 
 <form action="{% url 'events:add_done'%}" method="post">
-{% csrf_token %}
     {% csrf_token %}
-    {{ form }}
+    <label for="name">Event name: </label>
+    <input type="text" name="name" id="name" required><br>
+    <label for="date">Event date: </label>
+    <input type="date" name="date" id="date" required><br>
+    <label for="start_time">Event Start Time: </label>
+    <input type="time" name ="start_time" id="start_time" required><br>
+    <label for="end_time">Event End Time: </label>
+    <input type="time" name ="end_time" id="end_time" required><br>  
 <input type="submit" value="Add event">
 </form>
 </body>
