@@ -5,6 +5,7 @@ from django.utils import timezone
 import calendar
 
 from .models import Event
+from .forms import DateForm
 
 monthCount = 0
 yearCount = 0
@@ -38,22 +39,22 @@ def index(request,monthAdd = 0):
             temp_d_iter += 1
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
-    today = timezone.now().day
-     
+    today = timezone.now().day   
     context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today}
     return render(request, 'events/index.html', context)
 
 def add(request):
-    return render(request, 'events/add.html')
+    form = DateForm()
+    return render(request, 'events/add.html',{'form': form})
 
 def add_done(request):
-    try:
-        event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
-        event.save()
-    except:
-        print("Didn't get data!")
-
-
+    print(request.POST['name'])
+    new_name = request.POST['name']
+    datetime_object = request.POST['date']
+    
+    print(datetime_object)
+    event = Event(event_name=new_name,event_date="08-05-2020")
+    event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
 def day(request):

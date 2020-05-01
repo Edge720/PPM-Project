@@ -5,14 +5,12 @@
     <title>Add event</title>
 </head>
 <body>
-<h1>Add and event</h1>
+<h1>Add event</h1>
 
 <form action="{% url 'events:add_done'%}" method="post">
 {% csrf_token %}
-    <label for="name">Event name: </label>
-    <input type="text" name="name" id="name"><br>
-    <label for="date">Event date: </label>
-    <input type="datetime-local" name="date" id="date"><br>
+    {% csrf_token %}
+    {{ form }}
 <input type="submit" value="Add event">
 </form>
 </body>
