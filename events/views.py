@@ -48,6 +48,7 @@ def add(request):
     return render(request, 'events/add.html',{'form': form})
 
 def add_done(request):
+<<<<<<< HEAD
     print(request.POST['name'])
     new_name = request.POST['name']
     datetime_object = request.POST['date']
@@ -55,6 +56,15 @@ def add_done(request):
     print(datetime_object)
     event = Event(event_name=new_name,event_date="08-05-2020")
     event.save()
+=======
+    try:
+        event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
+        event.save()
+    except:
+        print("Didn't get data!")
+
+
+>>>>>>> 2c0f385c324c27dcd4489a2662d83d79d977ed59
     return HttpResponseRedirect(reverse('events:index'))
 
 def day_events(request):
