@@ -17,7 +17,7 @@ monthCount = 0
 yearCount = 0
 
 # Create your views here.
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def index(request):
     global monthCount, yearCount
     monthAdd = 0
@@ -62,7 +62,7 @@ def index(request):
     context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today, 'is_admin': is_admin}
     return render(request, 'events/index.html', context)
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def add(request):
     is_admin = 0
     if request.user.is_superuser:
@@ -71,13 +71,13 @@ def add(request):
     context = {'form': DateForm(), 'is_admin': is_admin}
     return render(request, 'events/add.html', context)
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def add_done(request):
     event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_user = request.user)
     event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def day_events(request, year, month, day):
     time_events = []
     time = datetime.time(8, 0, 0)
@@ -104,14 +104,14 @@ def day_events(request, year, month, day):
     context = {'year': year, 'month': month, 'day': day, 'time_events': time_events}
     return render(request, 'events/day_event_layout.html', context)
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def remove(request):
     events = Event.objects.all()
 
     context = {'events': events}
     return render(request, 'events/remove.html', context)
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def remove_done(request):
     try:
         event = Event.objects.get(pk=request.POST['choice'])
@@ -122,7 +122,7 @@ def remove_done(request):
     return HttpResponseRedirect(reverse('events:index'))
 
 @admin_only
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def add_user(request):
     form = CreateUserForm()
 
@@ -158,12 +158,12 @@ def login_page(request):
     context = {}
     return render(request,'events/login.html', context)
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def logout_user(request):
     logout(request)
-    return redirect('events:loginPage')
+    return redirect('events:login_page')
 
-@login_required(login_url='events:loginPage')
+@login_required(login_url='events:login_page')
 def event_details(request,year,month,day,event):
     event = Event.objects.get(pk=event)
     user = event.event_user
