@@ -1,18 +1,29 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
-import calendar
+from django.contrib import messages
+import calendar, datetime
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 from .models import Event
-from .forms import DateForm
+from .forms import DateForm, CreateUserForm
 
 monthCount = 0
 yearCount = 0
 
 # Create your views here.
-def index(request,monthAdd = 0):
-    global monthCount,yearCount
+@login_required(login_url='events:loginPage')
+def index(request):
+    global monthCount, yearCount
+    monthAdd = 0
+    if request.method == 'POST':
+        if request.POST.get('next'):
+            monthAdd = 1
+        elif request.POST.get('prev'):
+            monthAdd = -1
     int_month = int(monthAdd)
     monthCount = monthCount + int_month
     c = calendar.Calendar(calendar.MONDAY)
@@ -40,46 +51,55 @@ def index(request,monthAdd = 0):
             temp_d_iter += 1
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
-    today = timezone.now().day   
+    today = timezone.now().day
     context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today}
     return render(request, 'events/index.html', context)
 
+@login_required(login_url='events:loginPage')
 def add(request):
     form = DateForm()
     return render(request, 'events/add.html',{'form': form})
 
+@login_required(login_url='events:loginPage')
 def add_done(request):
-    desc = request.POST['description']
-    print(desc)
-    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=desc,start_time=request.POST['start_time'],end_time=request.POST['end_time'])
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'])
     event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
+@login_required(login_url='events:loginPage')
 def day_events(request, year, month, day):
-    try:
+    time_events = []
+    time = datetime.time(8, 0, 0)
+    count = 0
+    print(time)
+    while time < datetime.time(23, 0, 0):
         event_list = []
-        time = datetime.time(hour=8, minute = 30).strftime('%Y-%m-%d')
-        print(time)
-        while time < datetime.time(hour=19):
-            time = time + timedelta(hours= 1)
-            print(time)
-            
-        event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day).order_by('start_time')
+        event_set = Event.objects.filter(event_date__year=timezone.now().year + yearCount,
+                                         event_date__month=timezone.now().month + monthCount, event_date__day=day,
+                                         start_time=time)
         for event in event_set:
-            print(event.start_time)
-            event_list.append(event)
-    except:
-        event = 0
-    context={'year':year, 'month':month, 'day':day, 'event_list':event_list}
-    return render(request, 'events/day_events.html', context)
+            temptime = time
+            time_slots = (event.end_time.hour - event.start_time.hour) * 2
+            event_list.append([event, time_slots])
+        time_events.append([time, event_list])
+        half_hour = datetime.time(8 + count, 30, 0)
+        time_events.append([half_hour, ])
+        count = count + 1
 
+        time = datetime.time(8 + count, 0, 0)
 
+    event = 0
+    context = {'year': year, 'month': month, 'day': day, 'time_events': time_events}
+    return render(request, 'events/day_event_layout.html', context)
+
+@login_required(login_url='events:loginPage')
 def remove(request):
     events = Event.objects.all()
 
-    context = {'events':events}
+    context = {'events': events}
     return render(request, 'events/remove.html', context)
 
+@login_required(login_url='events:loginPage')
 def remove_done(request):
     try:
         event = Event.objects.get(pk=request.POST['choice'])
@@ -89,10 +109,43 @@ def remove_done(request):
 
     return HttpResponseRedirect(reverse('events:index'))
 
+@login_required(login_url='events:loginPage')
+def create_account(request):
+    form = CreateUserForm()
 
-def login(request,email ="",password = ""):
-    return render(request,'events/login.html')
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Account created successfully!")
 
+            return redirect(index())
+
+    context = {'form': form}
+    return render(request, 'events/create_account.html', context)
+
+def loginPage(request):
+    if request.method == 'POST':
+        username = request.POST.get('user')
+        password = request.POST.get('pwd')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('events:index')
+        else:
+            messages.info(request, 'Username or Password incorrect!')
+
+    context = {}
+    return render(request,'events/login.html', context)
+
+@login_required(login_url='events:loginPage')
+def logoutUser(request):
+    logout(request)
+    return redirect('events:loginPage')
+
+@login_required(login_url='events:loginPage')
 def event_details(request,year,month,day,event):
     event = Event.objects.get(pk=event)
     print(event.event_desc)
