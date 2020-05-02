@@ -47,8 +47,8 @@ def index(request):
             event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
             for event in event_set:
                 user = event.event_user
-                user_details = User.objects.get(username=user)
-                event_list.append([event, event.pk, user_details])
+                user_details = User.objects.get(username = user)
+                event_list.append([event,event.pk,user_details])
             if len(event_list) != 0:
                 c_list[temp_w_iter][temp_d_iter] = [day,event_list]
             else: c_list[temp_w_iter][temp_d_iter] = [day]
@@ -93,7 +93,7 @@ def day_events(request, year, month, day):
                                          start_time=time)
         for event in event_set:
             user = event.event_user
-            user_colour = User.objects.get(username=user)
+            user_colour = User.objects.get(username = user)
             temptime = time
             time_slots = (event.end_time.hour - event.start_time.hour) * 2
             event_list.append([event, time_slots, user_colour])
@@ -118,12 +118,13 @@ def add_user(request):
         if form.is_valid():
             user_saved = form.save()
 
-            r = lambda: random.randint(0, 255)
-            code = ('#%02X%02X%02X' % (r(), r(), r()))
+            r = lambda: random.randint(0,255)
+            code = ('#%02X%02X%02X' % (r(),r(),r()))
 
-            user_profile = UserProfile(user=user_saved, hex_code=code)
+            user_profile = UserProfile(user = user_saved, hex_code = code)
 
             user_profile.save()
+
             messages.success(request, "Account created successfully!")
 
             return redirect('events:index')
@@ -215,4 +216,4 @@ def event_remove_done(request, year, month, day, event_id):
         print('Error in retrieving event!')
 
     return HttpResponse('<script type="text/javascript">window.close();</script>')
-    
+
