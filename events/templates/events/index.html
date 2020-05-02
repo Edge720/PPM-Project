@@ -72,8 +72,10 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="add">Add</a>
     <a href="remove">Remove</a>
-    <a href="create-account">Create Account</a>
-    <a href="admin">Data</a>
+    {% if is_admin %}
+    <a href="create-account">Add User</a>
+    <a href="admin">Database</a>
+    {% endif %}
     <a href="logout">Log out</a>
 </div>
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>

@@ -4,9 +4,11 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 import calendar, datetime
+
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .decorators import admin_only, check_if_logged_in
 
 from .models import Event
 from .forms import DateForm, CreateUserForm
@@ -52,7 +54,12 @@ def index(request):
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
     today = timezone.now().day
-    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today}
+
+    is_admin = 0
+    if request.user.is_superuser:
+        is_admin = 1
+
+    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today, 'is_admin': is_admin}
     return render(request, 'events/index.html', context)
 
 @login_required(login_url='events:loginPage')
@@ -110,6 +117,7 @@ def remove_done(request):
 
     return HttpResponseRedirect(reverse('events:index'))
 
+@admin_only
 @login_required(login_url='events:loginPage')
 def create_account(request):
     form = CreateUserForm()
@@ -125,6 +133,7 @@ def create_account(request):
     context = {'form': form}
     return render(request, 'events/create_account.html', context)
 
+@check_if_logged_in
 def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('user')
@@ -151,8 +160,12 @@ def event_details(request,year,month,day,event):
     event = Event.objects.get(pk=event)
     user = event.event_user
     user_details = User.objects.get(username = user)
-    print(user_details.first_name)
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details}
+
+    can_change = 0
+    if request.user.id == event.event_user.id or request.user.is_superuser:
+        can_change = 1
+
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change}
     return render(request, 'events/event_details.html',context)
 
 
