@@ -33,8 +33,7 @@ def index(request,monthAdd = 0):
             event_list = []
             event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
             for event in event_set:
-                event_list.append(event)
-                print(event)
+                event_list.append([event,event.pk])
             if len(event_list) != 0:
                 c_list[temp_w_iter][temp_d_iter] = [day,event_list]
             else: c_list[temp_w_iter][temp_d_iter] = [day]
@@ -50,8 +49,10 @@ def add(request):
     return render(request, 'events/add.html',{'form': form})
 
 def add_done(request):
-    event = Event(event_name=request.POST['name'],event_date=request.POST['date'])
-    event.save()
+    desc = request.POST['description']
+    print(desc)
+    #event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=desc,start_time=request.POST['start_time'],end_time=request.POST['end_time'])
+    #event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
 def day_events(request, year, month, day):
@@ -81,6 +82,12 @@ def remove_done(request):
 
 def login(request,email ="",password = ""):
     return render(request,'events/login.html')
+
+def event_details(request,year,month,day,event):
+    event = Event.objects.get(pk=event)
+    print(event.event_desc)
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc}
+    return render(request, 'events/event_details.html',context)
 
 
 
