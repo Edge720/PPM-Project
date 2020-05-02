@@ -66,9 +66,9 @@
     {% endif %}
     <label for="end_time">Event End Time: </label>
         {% if event.end_time.minute == 0 %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:00" name ="start_time" id="start_time" required><br>
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:00" name ="end_time" id="end_time" required><br>
     {% else %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:{{ event.end_time.minute }}" name ="start_time" id="start_time" required><br>
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:{{ event.end_time.minute }}" name ="end_time" id="end_time" required><br>
     {% endif %}
     <label for="description">Event Description: </label>
     <textarea id="description" name="description" rows="10" cols="80">{{ event.event_desc }}</textarea>
