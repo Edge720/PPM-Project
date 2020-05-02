@@ -64,8 +64,12 @@ def index(request):
 
 @login_required(login_url='events:loginPage')
 def add(request):
-    form = DateForm()
-    return render(request, 'events/add.html',{'form': form})
+    is_admin = 0
+    if request.user.is_superuser:
+        is_admin = 1
+
+    context = {'form': DateForm(), 'is_admin': is_admin}
+    return render(request, 'events/add.html', context)
 
 @login_required(login_url='events:loginPage')
 def add_done(request):
@@ -119,7 +123,7 @@ def remove_done(request):
 
 @admin_only
 @login_required(login_url='events:loginPage')
-def create_account(request):
+def add_user(request):
     form = CreateUserForm()
 
     if request.method == 'POST':
@@ -130,11 +134,15 @@ def create_account(request):
 
             return redirect(index())
 
-    context = {'form': form}
+    is_admin = 0
+    if request.user.is_superuser:
+        is_admin = 1
+
+    context = {'form': form, 'is_admin': is_admin}
     return render(request, 'events/create_account.html', context)
 
 @check_if_logged_in
-def loginPage(request):
+def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('pwd')
@@ -151,7 +159,7 @@ def loginPage(request):
     return render(request,'events/login.html', context)
 
 @login_required(login_url='events:loginPage')
-def logoutUser(request):
+def logout_user(request):
     logout(request)
     return redirect('events:loginPage')
 
