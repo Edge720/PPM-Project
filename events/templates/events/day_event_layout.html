@@ -1,101 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="ppm.css">
+  <style>
+
+body {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+          justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
+  min-height: 100vh;
+  padding: 4rem 0;
+  font-family: -system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+table {
+  
+  width: 100%;
+  max-width: 70rem;
+}
+table tr:nth-child(even) th {
+  color: #ccc;
+  font-weight: normal;
+}
+table th,
+table td {
+  padding: 0.5rem 1rem;
+}
+table th {
+  font-weight: normal;
+  border-top: thin dotted #ccc;
+}
+table td {
+  font-size: 0.8rem;
+  font-weight: bold;
+  line-height: 1.4;
+  border-radius: 0.2rem;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+table td > span {
+  font-size: 0.8em;
+  font-weight: normal;
+  display: block;
+  width: 100%;
+}
+
+.stage-earth {
+  background-color: #FFA726;
+}
+
+.stage-mercury {
+  background-color: #9CCC65;
+}
+
+.stage-venus {
+  background-color: #FF8A65;
+}
+
+.stage-mars {
+  background-color: #B3E5FC;
+}
+
+.stage-jupiter {
+  background-color: #81D4FA;
+}
+
+.stage-saturn {
+  background-color: #26C6DA;
+}
+</style>	
 </head>
 <body>
 
 
 <table>
     <body>
-        <tr>
-            <th>08:00</th>
-	    <td colspan="8" rowspan="2" class="stage-saturn">Welcome</td>
-        </tr>
-        <tr>
-            <th>08:30</th>
-        </tr>
-        <tr>
-            <th>09:00</th>
-        </tr>
-        <tr>
-            <th>09:30</th>
-        </tr>
-        <tr>
-            <th>10:00</th>
-        </tr>
-        <tr>
-            <th>10:30</th>
-        </tr>
-        <tr>
-            <th>11:00</th>
-        </tr>
-        <tr>
-            <th>11:30</th>
-        </tr>
-        <tr>
-            <th>12:00</th>
-            
-        </tr>
-        <tr>
-            <th>12:30</th>
-        </tr>
-        <tr>
-            <th>13:00</th>
-        </tr>
-        <tr>
-            <th>13:30</th>
-        </tr>
-        <tr>
-            <th>14:00</th>
-        </tr>
-        <tr>
-            <th>14:30</th>
-        </tr>
-        <tr>
-            <th>15:00</th>
-        </tr>
-        <tr>
-            <th>15:30</th>
-        </tr>
-        <tr>
-            <th>16:00</th>
-        </tr>
-        <tr>
-            <th>16:30</th>
-        </tr>
-        <tr>
-            <th>17:00</th>
-        </tr>
-        <tr>
-            <th>17:30</th>
-        </tr>
-        <tr>
-            <th>18:00</th>
-        </tr>
-        <tr>
-            <th>18:30</th>
-        </tr>
-        <tr>
-            <th>19:00</th>
-        </tr>
-        <tr>
-            <th>19:30</th>
-        </tr>
-        <tr>
-            <th>20:00</th>
-        </tr>
-        <tr>
-            <th>20:30</th>
-            <td colspan="10" rowspan="2" class="stage-saturn">Drinks</td>
-        </tr>
-        <tr>
-            <th>21:00</th>
-        </tr>
+	{%for time in time_events %}
+            <tr>
+            	<th>{{ time.0 }}</th>
+		{% if time.1 %}
+			<td colspan="4" rowspan="{{time.1.0.1}}" class="stage-saturn">{{time.1.0.0}}</td>
+		{% endif %}
+            </tr>
+	{% endfor %} 
     </body>
 </table>
 
 </body>
 </html>
-
-Resources

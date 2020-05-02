@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.shortcuts import render
 from django.utils import timezone
 import calendar
+import datetime
+from datetime import timedelta
 
 from .models import Event
 from .forms import DateForm
@@ -56,22 +58,27 @@ def add_done(request):
     return HttpResponseRedirect(reverse('events:index'))
 
 def day_events(request, year, month, day):
-    try:
-        event_list = []
-        time = datetime.time(hour=8, minute = 30).strftime('%Y-%m-%d')
-        print(time)
-        while time < datetime.time(hour=19):
-            time = time + timedelta(hours= 1)
-            print(time)
-            
-        event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day).order_by('start_time')
+    time_events = []
+    time = datetime.time(8, 0, 0)
+    count = 0
+    print(time)
+    while time < datetime.time(23,0,0):
+        event_list = [] 
+        event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day, start_time = time)
         for event in event_set:
-            print(event.start_time)
-            event_list.append(event)
-    except:
-        event = 0
-    context={'year':year, 'month':month, 'day':day, 'event_list':event_list}
-    return render(request, 'events/day_events.html', context)
+            temptime = time
+            time_slots = (event.end_time.hour - event.start_time.hour) * 2 
+            event_list.append([event,time_slots])      
+        time_events.append([time,event_list])
+        half_hour = datetime.time(8+count, 30, 0)
+        time_events.append([half_hour,])
+        count = count + 1
+        
+        time = datetime.time(8+count, 0, 0)
+        
+    event = 0
+    context={'year':year, 'month':month, 'day':day, 'time_events':time_events}
+    return render(request, 'events/day_event_layout.html', context)
 
 
 def remove(request):
