@@ -51,16 +51,26 @@ def add(request):
 def add_done(request):
     desc = request.POST['description']
     print(desc)
-    #event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=desc,start_time=request.POST['start_time'],end_time=request.POST['end_time'])
-    #event.save()
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=desc,start_time=request.POST['start_time'],end_time=request.POST['end_time'])
+    event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
 def day_events(request, year, month, day):
     try:
-        event = Event.objects.get(event_dateyear=timezone.now().year + yearCount,event_datemonth=timezone.now().month + monthCount, event_date__day=day) #,start_time=request.POST['start_time'],end_time=request.POST['end_time']
+        event_list = []
+        time = datetime.time(hour=8, minute = 30).strftime('%Y-%m-%d')
+        print(time)
+        while time < datetime.time(hour=19):
+            time = time + timedelta(hours= 1)
+            print(time)
+            
+        event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day).order_by('start_time')
+        for event in event_set:
+            print(event.start_time)
+            event_list.append(event)
     except:
         event = 0
-    context={'year':year, 'month':month, 'day':day, 'event':event}
+    context={'year':year, 'month':month, 'day':day, 'event_list':event_list}
     return render(request, 'events/day_events.html', context)
 
 

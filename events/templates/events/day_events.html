@@ -7,12 +7,11 @@
     <title>Events for {{ year }}/{{ month }}/{{ day }}</title>
 </head>
 <body>
-{% if event != 0 %}
-    <h2>{{event.event_name}} - {{ event.event_date }}</h2>
+
+{% for event in event_list %}
+    <h2>{{event.event_name}} - {{ event.start_time}}</h2>
     <hr>
     description?
-{% else %}
-    No events on this day!
-{% endif %}
+{% endfor %}
 </body>
 </html>
