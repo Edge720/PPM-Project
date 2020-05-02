@@ -70,11 +70,13 @@
 <body>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a href="add">Add</a>
-    <a href="remove">Remove</a>
-    <a href="create-account">Create Account</a>
-    <a href="admin">Data</a>
-    <a href="logout">Log out</a>
+    <a href="{% url 'events:add' %}">Add</a>
+    <a href="{% url 'events:remove' %}">Remove</a>
+    {% if is_admin %}
+    <a href="{% url 'events:add_user' %}">Add User</a>
+    <a href="{% url 'admin:index' %}">Database</a>
+    {% endif %}
+    <a href="{% url 'events:logout_user' %}">Log out</a>
 </div>
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
 

@@ -3,7 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <title>Add event</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
+        td:hover{
+            background-color: lavender;
+        }
+
+	th {
+	    background-color: #f2f2f2;
+	    width: 120px;
+
+	}
+
+
+
+	tr:nth-child(even) {background-color: #f2f2f2;}
+
+    .sidenav {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+
+   #inner_table {
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidenav a:hover {
+      color: #f1f1f1;
+    }
+
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
 	
 	h1 {
 	    color : #E8E8E8;
@@ -50,7 +109,27 @@
     </style>
 </head>
 <body>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="{% url 'events:index' %}">Events</a>
+    <a href="{% url 'events:remove' %}">Remove</a>
+    {% if is_admin %}
+    <a href="{% url 'events:add_user' %}">Add User</a>
+    <a href="{% url 'admin:index' %}">Database</a>
+    {% endif %}
+    <a href="{% url 'events:logout_user' %}">Log out</a>
+</div>
+<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
 
+<script>
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+</script>
 
 <form action="{% url 'events:add_done'%}" method="post">
     <h1 style="text-align:center">Add Event To Calendar</h1>
