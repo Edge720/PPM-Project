@@ -60,9 +60,9 @@
     <label for="date">Event date: </label>
     <input type="date" name="date" id="date" required><br>
     <label for="start_time">Event Start Time: </label>
-    <input type="time" name ="start_time" id="start_time" required><br>
+    <input type="time" step="1800" min="08:00" max="22:30" name ="start_time" id="start_time" required><br>
     <label for="end_time">Event End Time: </label>
-    <input type="time" name ="end_time" id="end_time" required><br>
+    <input type="time" step="1800" min="08:00" max="22:30" name ="end_time" id="end_time" required><br>
     <label for="description">Event Description: </label>
     <textarea id="description" name="description" rows="10" cols="80"></textarea>
 <input type="submit" value="Add event" id = "btn">

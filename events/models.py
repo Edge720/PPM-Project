@@ -1,5 +1,5 @@
 import datetime
-
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -7,8 +7,9 @@ from django.utils import timezone
 class Event(models.Model):
     event_name = models.CharField(max_length=200)
     event_date = models.DateField('Event date')
-    start_time = models.TimeField(null=True)
-    end_time = models.TimeField(null=True)
-    event_desc = models.CharField(max_length=400,null=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    event_desc = models.CharField(max_length=400)
+    event_user = models.ForeignKey(User, default=None, on_delete = models.CASCADE)
     def __str__(self):
         return self.event_name

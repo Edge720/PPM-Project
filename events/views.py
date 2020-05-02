@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 import calendar, datetime
-
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
@@ -62,7 +62,7 @@ def add(request):
 
 @login_required(login_url='events:loginPage')
 def add_done(request):
-    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'])
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_user = request.user)
     event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
@@ -70,6 +70,7 @@ def add_done(request):
 def day_events(request, year, month, day):
     time_events = []
     time = datetime.time(8, 0, 0)
+    count_mins = 0
     count = 0
     print(time)
     while time < datetime.time(23, 0, 0):
@@ -82,11 +83,11 @@ def day_events(request, year, month, day):
             time_slots = (event.end_time.hour - event.start_time.hour) * 2
             event_list.append([event, time_slots])
         time_events.append([time, event_list])
-        half_hour = datetime.time(8 + count, 30, 0)
-        time_events.append([half_hour, ])
-        count = count + 1
-
-        time = datetime.time(8 + count, 0, 0)
+        count_mins = count_mins + 30
+        if count_mins == 60:
+            count = count + 1
+            count_mins = 0
+        time = datetime.time(8+count, 0 + count_mins, 0)
 
     event = 0
     context = {'year': year, 'month': month, 'day': day, 'time_events': time_events}
@@ -148,8 +149,10 @@ def logoutUser(request):
 @login_required(login_url='events:loginPage')
 def event_details(request,year,month,day,event):
     event = Event.objects.get(pk=event)
-    print(event.event_desc)
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc}
+    user = event.event_user
+    user_details = User.objects.get(username = user)
+    print(user_details.first_name)
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details}
     return render(request, 'events/event_details.html',context)
 
 
