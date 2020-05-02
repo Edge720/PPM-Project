@@ -5,15 +5,14 @@
     <title>Remove event</title>
 </head>
 <body>
-<h1>Remove an event</h1>
-
-<form action="{% url 'events:remove_done' %}" method="post">
+    <h1>Are you sure you want to remove - {{ event_name }} ?</h1>
+    <form action="{% url 'events:event_remove_done' year month day event_id %}" method="post">
     {% csrf_token %}
-    {% for event in events %}
-        <input type="radio" name="choice" value="{{ event.id }}">
-        <label for="name">{{ event.event_name }}</label><br>
-    {% endfor %}
-    <input type="submit" value="Remove event">
-</form>
+    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Yes" name="yes"/>
+    </form>
+    <form action="{% url 'events:event_details' year month day event_id %}" method="post">
+    {% csrf_token %}
+    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="No" name="no"/>
+    </form>
 </body>
 </html>

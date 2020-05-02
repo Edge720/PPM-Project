@@ -63,8 +63,8 @@
 	<br>
     {% if can_change %}
         <hr>
-        <a href="">Edit</a>
-        <a href="">Remove</a>
+        <a href="{% url 'events:event_edit' year month day event_id%}">Edit</a>
+        <a href="{% url 'events:event_remove' year month day event_id%}">Remove</a>
     {% endif %}
 </body>
 </html>

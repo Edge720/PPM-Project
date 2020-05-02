@@ -13,7 +13,7 @@
             <tr>
             	<th>{{ time.0 }}</th>
 		{% if time.1 %}
-			<td colspan="4" rowspan="{{time.1.0.1}}" class="stage-saturn">{{time.1.0.0}}</td>
+			<td colspan="4" style="background-color: {{time.1.0.2.userprofile.hex_code}};" rowspan="{{time.1.0.1}}"xw>{{time.1.0.0}}</td>
 		{% endif %}
             </tr>
 	{% endfor %}

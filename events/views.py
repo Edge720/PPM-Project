@@ -1,16 +1,16 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
-import calendar, datetime
+import calendar, datetime, random
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .decorators import admin_only, check_if_logged_in
+from .decorators import admin_only, check_if_logged_in, admin_or_creator_only
 
-from .models import Event
+from .models import Event, UserProfile
 from .forms import DateForm, CreateUserForm
 
 monthCount = 0
@@ -46,7 +46,9 @@ def index(request):
             event_list = []
             event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
             for event in event_set:
-                event_list.append([event,event.pk])
+                user = event.event_user
+                user_details = User.objects.get(username=user)
+                event_list.append([event, event.pk, user_details])
             if len(event_list) != 0:
                 c_list[temp_w_iter][temp_d_iter] = [day,event_list]
             else: c_list[temp_w_iter][temp_d_iter] = [day]
@@ -90,9 +92,11 @@ def day_events(request, year, month, day):
                                          event_date__month=timezone.now().month + monthCount, event_date__day=day,
                                          start_time=time)
         for event in event_set:
+            user = event.event_user
+            user_colour = User.objects.get(username=user)
             temptime = time
             time_slots = (event.end_time.hour - event.start_time.hour) * 2
-            event_list.append([event, time_slots])
+            event_list.append([event, time_slots, user_colour])
         time_events.append([time, event_list])
         count_mins = count_mins + 30
         if count_mins == 60:
@@ -104,23 +108,6 @@ def day_events(request, year, month, day):
     context = {'year': year, 'month': month, 'day': day, 'time_events': time_events}
     return render(request, 'events/day_event_layout.html', context)
 
-@login_required(login_url='events:login_page')
-def remove(request):
-    events = Event.objects.all()
-
-    context = {'events': events}
-    return render(request, 'events/remove.html', context)
-
-@login_required(login_url='events:login_page')
-def remove_done(request):
-    try:
-        event = Event.objects.get(pk=request.POST['choice'])
-        event.delete()
-    except:
-        print('Error in retrieving event!')
-
-    return HttpResponseRedirect(reverse('events:index'))
-
 @admin_only
 @login_required(login_url='events:login_page')
 def add_user(request):
@@ -129,10 +116,17 @@ def add_user(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
+            user_saved = form.save()
+
+            r = lambda: random.randint(0, 255)
+            code = ('#%02X%02X%02X' % (r(), r(), r()))
+
+            user_profile = UserProfile(user=user_saved, hex_code=code)
+
+            user_profile.save()
             messages.success(request, "Account created successfully!")
 
-            return redirect(index())
+            return redirect('events:index')
 
     is_admin = 0
     if request.user.is_superuser:
@@ -164,8 +158,8 @@ def logout_user(request):
     return redirect('events:login_page')
 
 @login_required(login_url='events:login_page')
-def event_details(request,year,month,day,event):
-    event = Event.objects.get(pk=event)
+def event_details(request, year, month, day, event_id):
+    event = Event.objects.get(pk=event_id)
     user = event.event_user
     user_details = User.objects.get(username = user)
 
@@ -173,9 +167,52 @@ def event_details(request,year,month,day,event):
     if request.user.id == event.event_user.id or request.user.is_superuser:
         can_change = 1
 
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change}
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id}
     return render(request, 'events/event_details.html',context)
 
+@admin_or_creator_only
+@login_required(login_url='events:login_page')
+def event_edit(request, year, month, day, event_id):
+    event = Event.objects.get(pk=event_id)
 
+    context = {'year': year, 'month':month, 'day':day, 'event_id':event_id, 'event': event}
+    return render(request, 'events/event_edit.html', context)
 
+@admin_or_creator_only
+@login_required(login_url='events:login_page')
+def event_edit_done(request, year, month, day, event_id):
+    try:
+        event = Event.objects.get(pk=event_id)
+    except:
+        print('Error in retrieving event!')
+
+    event.event_name = request.POST['name']
+    event.event_desc = request.POST['description']
+    event.start_time = request.POST['start_time']
+    event.end_time=request.POST['end_time']
+    event.save()
+
+    return redirect('events:event_details',year, month, day, event_id)
+
+@admin_or_creator_only
+@login_required(login_url='events:login_page')
+def event_remove(request, year, month, day, event_id):
+    try:
+        event = Event.objects.get(pk=event_id)
+    except:
+        print('Error in retrieving event!')
+
+    context = {'event_name': event.event_name, 'year': year, 'month':month, 'day':day, 'event_id':event_id}
+    return render(request, 'events/remove.html', context)
+
+@admin_or_creator_only
+@login_required(login_url='events:login_page')
+def event_remove_done(request, year, month, day, event_id):
+    try:
+        event = Event.objects.get(pk=event_id)
+        event.delete()
+    except:
+        print('Error in retrieving event!')
+
+    return HttpResponse('<script type="text/javascript">window.close();</script>')
     

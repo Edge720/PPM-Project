@@ -12,7 +12,7 @@
         }
 	
 	th {
-	    background-color: #f2f2f2;
+	    background-color: #ADD8E6;
 	    width: 120px;
 	    
 	}	
@@ -71,7 +71,6 @@
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="{% url 'events:add' %}">Add</a>
-    <a href="{% url 'events:remove' %}">Remove</a>
     {% if is_admin %}
     <a href="{% url 'events:add_user' %}">Add User</a>
     <a href="{% url 'admin:index' %}">Database</a>
@@ -124,7 +123,7 @@ function closeNav() {
 			    <table id="inner_table">  
                       	    <tr id = "event_item"><td style="cursor:pointer;"><a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td></tr>
 			    {% for event in day.1 %} 
-                    <tr><td style="background-color: #ADD8E6; border-radius: 5px; padding-right: 10px; padding-left: 5px; cursor:pointer; colour: white;"><a  style = "color: white;" target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}/{{ event.1 }}','test','width=600,height=400')">{{ event.0 }}</a></td></tr>
+                    <tr><td style="background-color: {{event.2.userprofile.hex_code}}; border-radius: 5px; padding-right: 10px; padding-left: 5px; cursor:pointer; colour: white;"><a  style = "color: white;" target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}/{{ event.1 }}','test','width=600,height=400')">{{ event.0 }}</a></td></tr>
 			    {% endfor %}
     			    </table>
 			    </td>
@@ -142,14 +141,14 @@ function closeNav() {
 <form action="" method="post">
     {% csrf_token %}
     <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Next" name="next"/>
-    </form>
+</form>
 <form action="" method="post">
     {% csrf_token %}
     <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Previous" name="prev"/>
-    </form>
+</form>
 <form action="" method="post">
     {% csrf_token %}
     <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Reset" name="reset"/>
-    </form>
+</form>
 </body>
 </html>

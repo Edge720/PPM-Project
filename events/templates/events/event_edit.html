@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/
+    <meta charset="UTF-8">
+    <title>{{ event.event_name }} on {{ event.event_date }}</title>
+    <style>
+	
+	h1 {
+	    color : #E8E8E8;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;    
+	    background: #787878;
+	    font-weight:normal;
+	}
+	
+	h2 {
+		color : #424242;
+		padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+		width = 100%;
+	}
+	
+	h3{
+		color : #5e5e5e;
+		padding: 0.5rem;
+	}
+	
+	p{
+		color : #303030;
+		padding: 0.5rem;
+	}
+	
+	body {
+	     background: #E8E8E8;
+	     font-family:sans-serif;
+	}
+	
+	form {
+	     background: #dbdbdb;
+	     max-width:1500px;
+		 height:880px;
+	     padding: 2rem;
+    }
+	
+	p {
+		padding: 0.7rm;
+	}
+
+    </style>
+</head>
+<body>
+<form action="{% url 'events:event_edit_done' year month day event_id%}" method="post">
+    <h1 style="text-align:left">Edit event</h1>
+    {% csrf_token %}
+    <label for="name">Event name: </label>
+    <input type="text" name="name" value="{{ event.event_name }}" id="name" required><br>
+    <label for="start_time">Event Start Time: </label>
+    {% if event.start_time.minute == 0 %}
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.start_time.hour }}:00" name ="start_time" id="start_time" required><br>
+    {% else %}
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.start_time.hour }}:{{ event.start_time.minute }}" name ="start_time" id="start_time" required><br>
+    {% endif %}
+    <label for="end_time">Event End Time: </label>
+        {% if event.end_time.minute == 0 %}
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:00" name ="start_time" id="start_time" required><br>
+    {% else %}
+        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:{{ event.end_time.minute }}" name ="start_time" id="start_time" required><br>
+    {% endif %}
+    <label for="description">Event Description: </label>
+    <textarea id="description" name="description" rows="10" cols="80">{{ event.event_desc }}</textarea>
+    <input type="submit" value="Done" id = "btn">
+</form>
+</body>
+</html>
