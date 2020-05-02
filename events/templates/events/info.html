@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+    <style>
+	
+	h1 {
+	    color : #E8E8E8;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;    
+	    background: #787878;
+	    font-weight:normal;
+	}
+	
+	h2 {
+		color : #424242;
+		padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+		width = 100%;
+	}
+	
+	h3{
+		color : #5e5e5e;
+		padding: 0.5rem;
+	}
+	
+	p{
+		color : #303030;
+		padding: 0.5rem;
+	}
+	
+	body {
+	     background: #E8E8E8;
+	     font-family:sans-serif;
+	}
+	
+	form {
+	     background: #dbdbdb;
+	     max-width:1500px;
+		 height:880px;
+	     padding: 2rem;
+    }
+	
+	p {
+		padding: 0.7rm;
+	}
+
+    </style>
+</head>
+<body>
+
+
+<form action="{% url 'events_details'%}" method="post">
+    <h1 style="text-align:left">Event Details</h1>
+    <h2>{{ event.event_name }}</h2>
+	<h3>{{ event.event_date }}</h3>
+	<h3>{{ event.start_time }}</h3>
+	<p>{{ event.event_desc }}</p>
+	<br>
+</form>
+
+</body>
+</html>
