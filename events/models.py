@@ -13,3 +13,11 @@ class Event(models.Model):
     event_user = models.ForeignKey(User, default=None, on_delete = models.CASCADE)
     def __str__(self):
         return self.event_name
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    hex_code = models.CharField(max_length=6, default = '#ADD8E6')
+
+
+    def __str__(self):
+        return self.user.username

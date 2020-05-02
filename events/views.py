@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 import calendar, datetime
+import random
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import admin_only, check_if_logged_in
 
 from .models import Event
+from .models import UserProfile 
 from .forms import DateForm, CreateUserForm
 
 monthCount = 0
@@ -46,7 +48,9 @@ def index(request):
             event_list = []
             event_set = Event.objects.filter(event_date__year=timezone.now().year+yearCount, event_date__month=timezone.now().month+monthCount, event_date__day=day)
             for event in event_set:
-                event_list.append([event,event.pk])
+                user = event.event_user
+                user_details = User.objects.get(username = user)
+                event_list.append([event,event.pk,user_details])
             if len(event_list) != 0:
                 c_list[temp_w_iter][temp_d_iter] = [day,event_list]
             else: c_list[temp_w_iter][temp_d_iter] = [day]
@@ -90,9 +94,11 @@ def day_events(request, year, month, day):
                                          event_date__month=timezone.now().month + monthCount, event_date__day=day,
                                          start_time=time)
         for event in event_set:
+            user = event.event_user
+            user_colour = User.objects.get(username = user)
             temptime = time
             time_slots = (event.end_time.hour - event.start_time.hour) * 2
-            event_list.append([event, time_slots])
+            event_list.append([event, time_slots, user_colour])
         time_events.append([time, event_list])
         count_mins = count_mins + 30
         if count_mins == 60:
@@ -129,10 +135,18 @@ def add_user(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
+            user_saved = form.save()
+
+            r = lambda: random.randint(0,255)
+            code = ('#%02X%02X%02X' % (r(),r(),r()))
+            
+            user_profile = UserProfile(user = user_saved, hex_code = code)
+
+            user_profile.save()
+            
             messages.success(request, "Account created successfully!")
 
-            return redirect(index())
+            return redirect('events:index')
 
     is_admin = 0
     if request.user.is_superuser:
@@ -149,6 +163,7 @@ def login_page(request):
 
         user = authenticate(request, username=username, password=password)
 
+        
         if user is not None:
             login(request, user)
             return redirect('events:index')
