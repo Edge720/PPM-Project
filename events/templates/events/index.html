@@ -125,7 +125,7 @@ function closeNav() {
                 <tr>
                 {% for day in week %}
                     {% if day.0 != 0 %}
-                        {% if today == day %}
+                        {% if today == day.0 %}
                             <td> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')" style="background-color: lightblue">{{ day.0 }}</a></td>
                         {% else %}		   
                             <td style="height: 150px";>
