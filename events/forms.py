@@ -13,3 +13,9 @@ class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name']
+
+        #def clean_email(self):
+            #email = self.cleaned_data.get('email')
+            #if not email.endswith('police.uk'):
+                #raise forms.ValidationError("Only .police.uk email addresses allowed")
+            #return email

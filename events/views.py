@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib import messages
 import calendar, datetime, random
 from django.db.models import F
+from django.core.mail import send_mail
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -96,8 +97,15 @@ def add_done(request):
         user = User.objects.get(pk=request.POST.get('users'))
     else:
         user = request.user
-    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_user = user)
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_location=request.POST['event_location'], event_user = user)
     event.save()
+
+    email_message = "You have been assigned to an event: " + event.event_name + "\nDate: " + event.event_date + "\n" + event.start_time + "-" + event.end_time 
+
+    account_email = user.email
+
+    send_mail('Event Assigned', email_message , account_email, [account_email], fail_silently = False)
+
     return HttpResponseRedirect(reverse('events:index'))
 
 @login_required(login_url='events:login_page')
@@ -148,6 +156,12 @@ def add_user(request):
 
             messages.success(request, "Account created successfully!")
 
+            email_message = 'Account successfully Created:' + user_saved.username
+
+            account_email = user_saved.email
+
+            send_mail('Account  Created', email_message, account_email, [account_email] ,fail_silently = False)
+
             return redirect('events:index')
 
     is_admin = 0
@@ -191,7 +205,7 @@ def event_details(request, year, month, day, event_id):
     if request.user.id == event.event_user.id or request.user.is_superuser:
         can_change = 1
 
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id,'review':review}
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day,'location':event.event_location, 'event_id':event_id,'review':review}
     return render(request, 'events/event_details.html',context)
 
 @admin_or_creator_only
