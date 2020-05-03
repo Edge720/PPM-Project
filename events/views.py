@@ -176,11 +176,21 @@ def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('user')
         password = request.POST.get('pwd')
-
+        
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
+            today = datetime.date.today()
+            week_ago = today - datetime.timedelta(days=7)
+            email_message = 'Events Require Reviewing: '
+            eventset = Event.objects.filter(event_user_id = user.id, event_reviewed = False, event_date__range=["2011-01-01", week_ago] )
+            if eventset.count() != 0:
+                for event in eventset:
+                     email_message = email_message+ event.event_name + "\n"
+                email_message = email_message + "These events are over a week old, please review them."
+                account_email = user.email
+                send_mail('Event Requires Reviewing', email_message, account_email, [account_email] ,fail_silently = False)
             return redirect('events:index')
         else:
             messages.info(request, 'Username or Password incorrect!')
