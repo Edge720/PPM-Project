@@ -10,8 +10,8 @@ class Event(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     event_desc = models.CharField(max_length=400)
-    event_reviewed = models.BooleanField(default=False)
-    event_location = models.CharField(default="", max_length=200)
+    event_reviewed = models.BooleanField(default = False)
+    event_location = models.CharField(default = "",max_length=200)
     event_user = models.ForeignKey(User, default=None, on_delete = models.CASCADE)
     def __str__(self):
         return self.event_name

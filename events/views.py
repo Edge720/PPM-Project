@@ -9,6 +9,8 @@ from django.db.models import F
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
+
 from .decorators import admin_only, check_if_logged_in, admin_or_creator_only
 
 from .models import Event, UserProfile, Review
@@ -57,6 +59,11 @@ def index(request):
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
     today = timezone.now().day
+    event_review_set = Event.objects.filter(event_date__range=["2011-01-01", timezone.now()], event_user = request.user, event_reviewed = False)
+    event_reviews = []
+    for event in event_review_set :
+        event_reviews.append(event)
+        print(event)
 
     event_review_set = Event.objects.filter(event_date__range=["2011-01-01", timezone.now()], event_user=request.user,
                                             event_reviewed=False)
@@ -178,14 +185,13 @@ def event_details(request, year, month, day, event_id):
     user = event.event_user
     review = None
     user_details = User.objects.get(username = user)
-
     if (event.event_reviewed == True):
-        review = Review.objects.get(event_reviewed=event_id)
+        review = Review.objects.get(event_reviewed = event_id)
     can_change = 0
     if request.user.id == event.event_user.id or request.user.is_superuser:
         can_change = 1
 
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id, 'review':review}
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id,'review':review}
     return render(request, 'events/event_details.html',context)
 
 @admin_or_creator_only
@@ -267,3 +273,6 @@ def review_done(request,event_id):
     event.save()
 
     return HttpResponseRedirect(reverse('events:index'))
+
+
+

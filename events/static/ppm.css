@@ -23,7 +23,7 @@ table tr:nth-child(even) th {
 }
 table th,
 table td {
-  color: white;
+  color:white;
   padding: 0.5rem 1rem;
 }
 table th {
