@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import RedirectView
 
 from . import views
 
@@ -19,6 +18,5 @@ urlpatterns = [
     path('<year>-<month>-<day>/<event_id>/remove/done', views.event_remove_done, name='event_remove_done'),
     path('add-user/', views.add_user, name='add_user'),
     path('review/<event_id>', views.review_events, name='review_events'),
-    path('review/done/<event_id>', views.review_done, name='review_done')
-
+    path('review/done/<event_id>', views.review_done, name='review_done'),
 ]

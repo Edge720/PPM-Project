@@ -130,7 +130,7 @@ function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
 </script>
-<form action="{% url 'events:add_done'%}" method="post">
+<form action="" method="post">
     <h1 style="text-align:center">Add A New User</h1>
     {% csrf_token %}
     {{ form.as_p }}
