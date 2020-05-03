@@ -67,7 +67,16 @@
     </style>
     <title>Calendar</title>
 </head>
-<body>
+<body {%if event_review %} 
+        {% for event in event_review %}
+		target="popup" onload="window.open('review/{{ event.id}}', '_blank');"
+	{% endfor %}
+      {% endif %}
+>
+
+
+
+
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="{% url 'events:add' %}">Add</a>
