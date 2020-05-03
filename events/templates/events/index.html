@@ -126,15 +126,12 @@ function closeNav() {
                 {% for day in week %}
                     {% if day.0 != 0 %}
                         {% if today == day.0 %}
-<<<<<<< HEAD
                             <td> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')" style="background-color: lightblue">{{ day.0 }}</a></td>
-=======
                             {% if current_month == month %}
                                 <td  style="background-color: lightcyan"> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td>
                             {% else %}
                                 <td> <a target="popup" onclick="window.open('{{ year }}-{{ month }}-{{ day.0 }}','name','width=600,height=400')">{{ day.0 }}</a></td>
                             {% endif %}
->>>>>>> 9436c357dedbec6b900904cc628d46f0b7c235d0
                         {% else %}		   
                             <td style="height: 150px";>
 			    <table id="inner_table">  
