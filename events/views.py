@@ -127,8 +127,8 @@ def day_events(request, year, month, day):
     print(time)
     while time < datetime.time(23, 0, 0):
         event_list = []
-        event_set = Event.objects.filter(event_date__year=timezone.now().year + yearCount,
-                                         event_date__month=timezone.now().month + monthCount, event_date__day=day,
+        event_set = Event.objects.filter(event_date__year=year,
+                                         event_date__month=month, event_date__day=day,
                                          start_time=time)
         for event in event_set:
             user = event.event_user
