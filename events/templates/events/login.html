@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +7,23 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background-image: url("{% static 'back.jpg' %}");
+            background-position: center;
+            background-attachment: scroll;
+        }
+    </style>
     <title>Login</title>
 </head>
 <body>
 <div style="padding-left: 30%; padding-right: 30%; padding-top: 15%;">
-    <div style="background-color: lightgrey;" class="panel panel-default">
+    <div class="panel panel-default">
         <form class="panel-body" action="" method="post">
             {% csrf_token %}
+            <label style = "text-align: center;">Welcome To The CPOC:</label>
+		    <br>
+		    <br>
             <div class="form-group">
                 <label for="user">Username:</label>
                 <input type="text" class="form-control" id="user" name="user">

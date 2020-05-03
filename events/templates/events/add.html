@@ -135,6 +135,14 @@ function closeNav() {
     {% csrf_token %}
     <label for="name">Event name: </label>
     <input type="text" name="name" id="name" required><br>
+    {% if is_admin == 1 %}
+        <label for="users">Event coordinator: </label>
+        <select id="users" name="users">
+            {% for user in users %}
+                <option value="{{ user.user.id }}">{{ user }}</option>
+            {% endfor %}
+        </select><br><br>
+    {% endif %}
     <label for="date">Event date: </label>
     <input type="date" name="date" id="date" required><br>
     <label for="start_time">Event Start Time: </label>

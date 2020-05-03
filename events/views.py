@@ -4,13 +4,14 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 import calendar, datetime, random
+from django.db.models import F
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import admin_only, check_if_logged_in, admin_or_creator_only
 
-from .models import Event, UserProfile
+from .models import Event, UserProfile, Review
 from .forms import DateForm, CreateUserForm
 
 monthCount = 0
@@ -57,11 +58,18 @@ def index(request):
     del temp_d_iter, temp_w_iter
     today = timezone.now().day
 
+    event_review_set = Event.objects.filter(event_date__range=["2011-01-01", timezone.now()], event_user=request.user,
+                                            event_reviewed=False)
+    event_reviews = []
+    for event in event_review_set:
+        event_reviews.append(event)
+        print(event)
+
     is_admin = 0
     if request.user.is_superuser:
         is_admin = 1
 
-    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today, 'is_admin': is_admin}
+    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today, 'is_admin': is_admin, 'event_review':event_reviews}
     return render(request, 'events/index.html', context)
 
 @login_required(login_url='events:login_page')
@@ -70,12 +78,18 @@ def add(request):
     if request.user.is_superuser:
         is_admin = 1
 
-    context = {'form': DateForm(), 'is_admin': is_admin}
+    users = UserProfile.objects.all()
+
+    context = {'form': DateForm(), 'is_admin': is_admin, 'users': users}
     return render(request, 'events/add.html', context)
 
 @login_required(login_url='events:login_page')
 def add_done(request):
-    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_user = request.user)
+    if request.user.is_superuser:
+        user = User.objects.get(pk=request.POST.get('users'))
+    else:
+        user = request.user
+    event = Event(event_name=request.POST['name'],event_date=request.POST['date'],event_desc=request.POST['description'],start_time=request.POST['start_time'],end_time=request.POST['end_time'], event_user = user)
     event.save()
     return HttpResponseRedirect(reverse('events:index'))
 
@@ -162,13 +176,16 @@ def logout_user(request):
 def event_details(request, year, month, day, event_id):
     event = Event.objects.get(pk=event_id)
     user = event.event_user
+    review = None
     user_details = User.objects.get(username = user)
 
+    if (event.event_reviewed == True):
+        review = Review.objects.get(event_reviewed=event_id)
     can_change = 0
     if request.user.id == event.event_user.id or request.user.is_superuser:
         can_change = 1
 
-    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id}
+    context = {'date':event.event_date, 'event':event, 'start':event.start_time, 'end':event.end_time, 'description':event.event_desc, 'user':user_details, 'can_change': can_change, 'year': year, 'month':month, 'day':day, 'event_id':event_id, 'review':review}
     return render(request, 'events/event_details.html',context)
 
 @admin_or_creator_only
@@ -176,7 +193,18 @@ def event_details(request, year, month, day, event_id):
 def event_edit(request, year, month, day, event_id):
     event = Event.objects.get(pk=event_id)
 
-    context = {'year': year, 'month':month, 'day':day, 'event_id':event_id, 'event': event}
+    is_admin = 0
+    if request.user.is_superuser:
+        is_admin = 1
+
+    users = UserProfile.objects.all()
+
+    start_time_hour = "%02d" % event.start_time.hour
+    start_time_min = "%02d" % event.start_time.minute
+    end_time_hour = "%02d" % event.end_time.hour
+    end_time_min = "%02d" % event.end_time.minute
+
+    context = {'year': year, 'month':month, 'day':day, 'event_id':event_id, 'event': event, 'is_admin': is_admin, 'users': users, 'start_time_hour':start_time_hour, 'end_time_hour': end_time_hour, 'start_time_min':start_time_min, 'end_time_min': end_time_min}
     return render(request, 'events/event_edit.html', context)
 
 @admin_or_creator_only
@@ -187,7 +215,13 @@ def event_edit_done(request, year, month, day, event_id):
     except:
         print('Error in retrieving event!')
 
+    if request.user.is_superuser:
+        user = User.objects.get(pk=request.POST.get('users'))
+    else:
+        user = request.user
+
     event.event_name = request.POST['name']
+    event.event_user = user
     event.event_desc = request.POST['description']
     event.start_time = request.POST['start_time']
     event.end_time=request.POST['end_time']
@@ -217,3 +251,19 @@ def event_remove_done(request, year, month, day, event_id):
 
     return HttpResponse('<script type="text/javascript">window.close();</script>')
 
+def review_events(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    context = {'event':event}
+    return render(request, 'events/review.html',context)
+
+def review_done(request,event_id):
+    if (request.POST['attended'] == "on"):
+        value = True
+    else: value = False
+    event = Event.objects.get(pk=event_id)
+    event_review = Review(event_reviewed=event,review=request.POST['description'],attended=value,attendance=request.POST['quantity'],rating=request.POST['rating'])
+    event_review.save()
+    event.event_reviewed = True
+    event.save()
+
+    return HttpResponseRedirect(reverse('events:index'))

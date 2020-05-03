@@ -5,20 +5,23 @@
   <link rel="stylesheet" href='{% static "ppm.css"%}'>
 </head>
 <body>
+<script>
+    setTimeout(function(){
+   window.location.reload(1);
+}, 5000);
+</script>
 
-
-<table>
+<table id="events">
     <body>
 	{%for time in time_events %}
             <tr>
             	<th>{{ time.0 }}</th>
 		{% if time.1 %}
-			<td colspan="4" style="background-color: {{time.1.0.2.userprofile.hex_code}};" rowspan="{{time.1.0.1}}"xw>{{time.1.0.0}}</td>
+			<td colspan="4" style="background-color: {{time.1.0.2.userprofile.hex_code}}; color = "white"; rowspan="{{time.1.0.1}}">{{time.1.0.0}}</td>
 		{% endif %}
             </tr>
 	{% endfor %}
     </body>
 </table>
-
 </body>
 </html>

@@ -58,18 +58,22 @@
     {% csrf_token %}
     <label for="name">Event name: </label>
     <input type="text" name="name" value="{{ event.event_name }}" id="name" required><br>
+    {% if is_admin == 1 %}
+        <label for="users">Event coordinator: </label>
+        <select id="users" name="users">
+            {% for user in users %}
+                {% if user.user.id == event.event_user.id %}
+                    <option value="{{ user.user.id }}" selected>{{ user }}</option>
+                {% else %}
+                    <option value="{{ user.user.id }}">{{ user }}</option>
+                {% endif %}
+            {% endfor %}
+        </select><br>
+    {% endif %}
     <label for="start_time">Event Start Time: </label>
-    {% if event.start_time.minute == 0 %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.start_time.hour }}:00" name ="start_time" id="start_time" required><br>
-    {% else %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.start_time.hour }}:{{ event.start_time.minute }}" name ="start_time" id="start_time" required><br>
-    {% endif %}
+    <input type="time" step="1800" min="08:00" max="22:30" value="{{ start_time }}" name ="start_time" id="start_time" required><br>
     <label for="end_time">Event End Time: </label>
-        {% if event.end_time.minute == 0 %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:00" name ="end_time" id="end_time" required><br>
-    {% else %}
-        <input type="time" step="1800" min="08:00" max="22:30" value="{{ event.end_time.hour }}:{{ event.end_time.minute }}" name ="end_time" id="end_time" required><br>
-    {% endif %}
+    <input type="time" step="1800" min="08:00" max="22:30" value="{{ end_time }}" name ="end_time" id="end_time" required><br>
     <label for="description">Event Description: </label>
     <textarea id="description" name="description" rows="10" cols="80">{{ event.event_desc }}</textarea>
     <input type="submit" value="Done" id = "btn">

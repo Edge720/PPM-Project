@@ -67,7 +67,13 @@
     </style>
     <title>Calendar</title>
 </head>
-<body>
+<body
+{%if event_review %}
+        {% for event in event_review %}
+		target="popup" onload="window.open('review/{{ event.id}}', '_blank');"
+	{% endfor %}
+{% endif %}
+>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="{% url 'events:add' %}">Add</a>
@@ -89,7 +95,7 @@ function closeNav() {
 }
 </script>
 
-<div class="container" >
+<div id="cal" class="container" >
     {% for message in messages %}
         <p>{{ message }}</p>
     {% endfor %}
@@ -150,5 +156,12 @@ function closeNav() {
     {% csrf_token %}
     <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Reset" name="reset"/>
 </form>
+<script>
+$(document).ready(function(){
+setInterval(function(){
+      $("#cal").load(window.location.href + " #cal" );
+}, 5000);
+});
+</script>
 </body>
 </html>

@@ -53,6 +53,11 @@
     </style>
 </head>
 <body>
+<script>
+    setTimeout(function(){
+   window.location.reload(1);
+}, 5000);
+</script>
 
     <h1 style="text-align:left">Event Details</h1>
     <h2>{{ event.event_name }}</h2>
@@ -61,6 +66,12 @@
 	<p>{{ event.event_desc }}</p>
 	<p>Created By: {{user.first_name}} {{user.last_name}}</p>
 	<br>
+    {% if review %}
+	<p>Attended: {{ review.attended }}</p>
+	<p>Attendance: {{ review.attendance }}</p>
+	<p>Rating: {{ review.rating }}</p>
+	<p>Review: {{ review.review }}</p>
+    {% endif %}
     {% if can_change %}
         <hr>
         <a href="{% url 'events:event_edit' year month day event_id%}">Edit</a>
