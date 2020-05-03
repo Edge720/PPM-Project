@@ -17,31 +17,40 @@ from .decorators import admin_only, check_if_logged_in, admin_or_creator_only
 from .models import Event, UserProfile, Review
 from .forms import DateForm, CreateUserForm
 
-monthCount = 0
-yearCount = 0
-
 # Create your views here.
 @login_required(login_url='events:login_page')
 def index(request):
-    global monthCount, yearCount
-    monthAdd = 0
+    if 'monthCount' in request.session:
+        monthCount = request.session['monthCount']
+    else:
+        monthCount = 0
+        request.session['monthCount'] = monthCount
+
+    if 'yearCount' in request.session:
+        yearCount = request.session['yearCount']
+    else:
+        yearCount = 0
+        request.session['yearCount'] = yearCount
+
     if request.method == 'POST':
         if request.POST.get('next'):
-            monthAdd = 1
+            monthCount += 1
+            request.session['monthCount'] = request.session['monthCount'] + 1
         elif request.POST.get('prev'):
-            monthAdd = -1
-    int_month = int(monthAdd)
-    monthCount = monthCount + int_month
-    c = calendar.Calendar(calendar.MONDAY)
-    if int_month == 0:
-        monthCount = 0
-        yearCount = 0
+            monthCount -= 1
+            request.session['monthCount'] = request.session['monthCount'] - 1
+        else:
+            monthCount = 0
+            yearCount = 0
+            request.session['monthCount'] = 0
+            request.session['yearCount'] = 0
     if timezone.now().month+monthCount == 13 :
         monthCount = - timezone.now().month+1
         yearCount = yearCount + 1
     if timezone.now().month+monthCount == 0 :
         monthCount = 12 - timezone.now().month
         yearCount = yearCount - 1
+    c = calendar.Calendar(calendar.MONDAY)
     c_list = c.monthdayscalendar(timezone.now().year+yearCount, timezone.now().month+monthCount)
     temp_w_iter = 0
     for week in c_list:
@@ -60,6 +69,7 @@ def index(request):
         temp_w_iter += 1
     del temp_d_iter, temp_w_iter
     today = timezone.now().day
+    current_month = timezone.now().month
     event_review_set = Event.objects.filter(event_date__range=["2011-01-01", timezone.now()], event_user = request.user, event_reviewed = False)
     event_reviews = []
     for event in event_review_set :
@@ -77,7 +87,7 @@ def index(request):
     if request.user.is_superuser:
         is_admin = 1
 
-    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today':today, 'is_admin': is_admin, 'event_review':event_reviews}
+    context = {'c_list': c_list, 'year': timezone.now().year+yearCount, 'month': timezone.now().month+monthCount, 'today': today, 'current_month':current_month, 'is_admin': is_admin, 'event_review':event_reviews}
     return render(request, 'events/index.html', context)
 
 @login_required(login_url='events:login_page')
