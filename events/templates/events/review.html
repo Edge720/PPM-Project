@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add event</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        td:hover{
+            background-color: lavender;
+        }
+
+	th {
+	    background-color: #f2f2f2;
+	    width: 120px;
+
+	}
+
+
+
+	tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+   #inner_table {
+      border-collapse: separate;
+      border-spacing: 5px;
+    }
+
+	
+	h1 {
+	    color : #E8E8E8;
+	    border: 2px solid #3498DB;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;
+	    
+	    background: #3498DB;
+	    font-weight:normal;
+	}
+
+	body {
+	     background: #E8E8E8;
+	     font-family:sans-serif;
+	}
+	form {
+	     background: white;
+	     margin:3rem auto;
+	     max-width:500px;
+	     border: 2px solid #3498DB;
+	     padding: 2rem;
+	     border-radius: 5px;
+		
+    }
+	input {
+	     display:block;
+	     width: 100%	
+	}
+	
+	#btn {
+	     border:0;
+	     height: 2rem;
+	     background:#3498DB;
+	     text-transform:uppercase;
+	     cursor:pointer;
+	     width:auto;
+	      &:hover{
+		background:#3498D8;
+		}   
+	}
+
+
+    </style>
+</head>
+<body>
+
+
+<form action="{% url 'events:review_done' event.id%}" method="post">
+    <h1 style="text-align:center">Review Event: {{event}} on {{event.event_date}}</h1>
+    {% csrf_token %}
+    <label for="descripton">Please Review The Event:</label>
+    <textarea id="description" name="description" rows="10" cols="80"></textarea>
+     </br>
+    <label for="rating">How Successful was your attendance:</label> 
+    <select id="rating" name="rating">
+    	<option value=0>Unsuccessful</option>
+    	<option value=1>Somewhat Successful</option>
+	<option value=2>Very Successful</option>
+	<option value=3>Extremely Successful</option>
+    </select>
+    </br>
+    </br>
+    <label for="quantity">Number of People in attendance:</label>
+    <input type="number" id="quantity" name="quantity" min="0">
+    </br>
+    <label for="attended">Attended:</label>
+    <input type="checkbox" id="attended" name="attended">
+    </br>  
+<input type="submit" value="Add event" id = "btn">
+</form>
+</body>
+</html>
