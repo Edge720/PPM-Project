@@ -2,17 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Remove event</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>{{ event.event_name }} on {{ event.event_date }}</title>
+    <style>
+
+	h1 {
+	    color : #E8E8E8;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;
+	    background: #787878;
+	    font-weight:normal;
+	}
+
+	h2 {
+		color : #424242;
+		padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+		width = 100%;
+	}
+
+	h3{
+		color : #5e5e5e;
+		padding: 0.5rem;
+	}
+
+	p{
+		color : #303030;
+		padding: 0.5rem;
+	}
+
+	body {
+	     background: #E8E8E8;
+	     font-family:sans-serif;
+	}
+
+	form {
+	     background: #dbdbdb;
+	     max-width:1500px;
+		 height:880px;
+	     padding: 2rem;
+    }
+
+	p {
+		padding: 0.7rm;
+	}
+
+    </style>
 </head>
 <body>
-    <h1>Are you sure you want to remove - {{ event_name }} ?</h1>
+<script>
+    setTimeout(function(){
+   window.location.reload(1);
+}, 5000);
+</script>
+
     <form action="{% url 'events:event_remove_done' year month day event_id %}" method="post">
-    {% csrf_token %}
-    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Yes" name="yes"/>
-    </form>
-    <form action="{% url 'events:event_details' year month day event_id %}" method="post">
-    {% csrf_token %}
-    <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="No" name="no"/>
+        <h2>Are you sure you want to remove - {{ event_name }} ?</h2>
+        {% csrf_token %}
+        <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Yes" name="yes" class="btn btn-default"/><br>
+        <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="No" name="no" class="btn btn-default"/>
     </form>
 </body>
 </html>

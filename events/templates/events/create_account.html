@@ -64,6 +64,48 @@
       .sidenav {padding-top: 15px;}
       .sidenav a {font-size: 18px;}
     }
+    	h1 {
+	    color : #E8E8E8;
+	    border: 2px solid #3498DB;
+ 	    padding: 0.5rem;
+	    padding-bottom: 0.5rem;
+	    width = 100%;
+
+	    background: #3498DB;
+	    font-weight:normal;
+	}
+
+	body {
+	     background: #E8E8E8;
+	     font-family:sans-serif;
+	}
+	form {
+	     background: white;
+	     margin:3rem auto;
+	     max-width:500px;
+	     border: 2px solid #3498DB;
+	     padding: 2rem;
+	     border-radius: 5px;
+
+    }
+	input {
+	     display:block;
+	     width: 100%
+	}
+
+	#btn {
+	     border:0;
+	     height: 2rem;
+	     background:#3498DB;
+	     text-transform:uppercase;
+	     cursor:pointer;
+	     width:auto;
+	      &:hover{
+		background:#3498D8;
+		}
+	}
+
+
     </style>
     <title>Add a user</title>
 </head>
@@ -88,13 +130,11 @@ function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
 </script>
-
-
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <input type="submit" name="create_user">
-    </form>
+<form action="{% url 'events:add_done'%}" method="post">
+    <h1 style="text-align:center">Add A New User</h1>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="create_user" id = "btn">
+</form>
 </body>
 </html>
