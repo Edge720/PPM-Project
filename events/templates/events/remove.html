@@ -38,13 +38,6 @@
 	     font-family:sans-serif;
 	}
 
-	form {
-	     background: #dbdbdb;
-	     max-width:1500px;
-		 height:880px;
-	     padding: 2rem;
-    }
-
 	p {
 		padding: 0.7rm;
 	}
@@ -61,7 +54,10 @@
     <form action="{% url 'events:event_remove_done' year month day event_id %}" method="post">
         <h2>Are you sure you want to remove - {{ event_name }} ?</h2>
         {% csrf_token %}
-        <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Yes" name="yes" class="btn btn-default"/><br>
+        <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="Yes" name="yes" class="btn btn-default"/>
+    </form>
+    <form action="{% url 'events:event_details' year month day event_id %}" method="post">
+        {% csrf_token %}
         <input type="submit"  style="padding: 5px 10px; margin-left:200px;" value="No" name="no" class="btn btn-default"/>
     </form>
 </body>
