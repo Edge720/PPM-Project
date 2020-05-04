@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
-from .decorators import admin_only, check_if_logged_in, admin_or_creator_only
+from .decorators import admin_only, check_if_logged_in, admin_or_creator_only, admin_or_creator_only_review
 
 from .models import Event, UserProfile, Review
 from .forms import DateForm, CreateUserForm
@@ -291,16 +291,16 @@ def event_remove_done(request, year, month, day, event_id):
 
     return HttpResponse('<script type="text/javascript">window.close();</script>')
 
-@admin_or_creator_only
+@admin_or_creator_only_review
 @login_required(login_url='events:login_page')
 def review_events(request, event_id):
     event = Event.objects.get(pk=event_id)
     context = {'event':event}
     return render(request, 'events/review.html',context)
 
-@admin_or_creator_only
+@admin_or_creator_only_review
 @login_required(login_url='events:login_page')
-def review_done(request,event_id):
+def review_done(request, event_id):
     if (request.POST['attended'] == "on"):
         value = True
     else: value = False
